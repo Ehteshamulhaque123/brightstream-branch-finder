@@ -38,3 +38,7 @@ Design tokens were extracted from Brightstream mockups:
 ## Known Limitations
 - Exact Branch fields depend on schema; the app uses introspection to auto-detect best fields.
 - If the schema lacks coordinates, map pins may not display.
+
+<!-- Trigger redeploy: update timestamp -->
+
+Last redeploy: February 21, 2026
