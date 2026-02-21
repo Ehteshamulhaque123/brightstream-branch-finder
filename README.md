@@ -1,23 +1,40 @@
-# BranchFinder
+# Brightstream Branch Finder
 
-A modern, responsive branch locator app for Brightstream, built with Next.js, React, and TypeScript.
+## Overview
+A responsive, brand-matched branch finder for Brightstream Bank. Branch data is fetched from Optimizely Graph via GraphQL and presented with search, filters, and (optional) map + geolocation.
 
-## Features
-- Search and filter branches by name, city, or address
-- "Near me" geolocation to find the closest branches
-- Interactive map view with branch markers
-- Client-side filtering and pagination for fast results
-- Clean UI with Brightstream branding and gold accent
-- Fully documented implementation and normalization process
+## Tech Stack
+- Next.js (App Router) + TypeScript
+- Optimizely Graph (GraphQL)
+- Leaflet + React-Leaflet (map)
 
 ## Setup
-1. Clone the repository
-2. Install dependencies with `npm install`
-3. Start the development server with `npm run dev`
+1. Install dependencies: `npm install`
+2. Create `.env.local`: `NEXT_PUBLIC_OPTIMIZELY_GRAPH_ENDPOINT=`
+3. Run: `npm run dev`
 
-## Repository Structure
-- `brightstream-branch-finder/` — Main app code and documentation
-- `README.md` — This file (project-level overview)
+## Features
+### Must Have (Implemented)
+- Fetch & display branches from Optimizely Graph
+- Search by name/city/address
+- Filter by country
+- Responsive design
+- Brightstream-style hero, CTAs, pill filters, typography
 
-## License
-MIT
+### Nice to Have (Implemented)
+- Interactive map view (Leaflet)
+- Geolocation ("Near me")
+- Distance calculation (Haversine)
+- Directions link (Google Maps)
+- Branch detail modal
+
+## Design System Notes
+Design tokens were extracted from Brightstream mockups:
+- Deep navy/teal gradient hero
+- Gold CTA color
+- Serif hero headings + sans body
+- Rounded pill filters, large radii, soft shadows
+
+## Known Limitations
+- Exact Branch fields depend on schema; the app uses introspection to auto-detect best fields.
+- If the schema lacks coordinates, map pins may not display.
