@@ -146,32 +146,168 @@
 ## Challenges Faced: Geolocation, Map, and "Near Me" Implementation
 
 ### 1. Geolocation and "Near Me" Challenges
-- **API Pagination Limit:** The GraphQL API only allows fetching up to 100 branches per request. To show the truly nearest branches, we had to fetch all pages (in parallel) when "Near me" is active, then sort all results by distance on the client.
-- **Performance:** Fetching all branches (potentially 1000+) could be slow. We optimized by fetching all pages in parallel and paginating client-side after sorting by distance.
-- **Accurate Sorting:** The backend does not support geospatial queries, so we calculate the distance from the user's location to each branch using the Haversine formula in the frontend, then sort.
-- **User Experience:** When the user clicks "Near me", we clear all filters, fetch all branches, and show the closest ones first, paginated. If the user clears their location, we reset to normal paged fetching.
-- **Location Permissions:** If the user denies geolocation, we show a clear error and do not break the UI.
 
 ### 2. How Geolocation, Map, and "Near Me" Work
 - **Geolocation:**
-  - Uses the browser's `navigator.geolocation.getCurrentPosition` API to get the user's latitude and longitude.
-  - If successful, stores the user's location in state and triggers a re-fetch of all branches.
-- **Fetching and Sorting:**
-  - When "Near me" is active, fetches all branches from the API (using multiple requests if needed).
   - Calculates the distance from the user's location to each branch using the Haversine formula.
   - Sorts all branches by distance (nearest first) and paginates client-side.
-- **Map Integration:**
   - Uses `react-leaflet` to render a map with markers for each branch.
   - Clicking a marker or card opens a detail modal with all branch info.
-  - The map view is always available, and the "Near me" feature works in both list and map modes.
 - **Edge Cases:**
   - Handles missing or malformed coordinates gracefully (branch is shown but not sorted by distance).
   - If the API returns fewer than 100 branches, only one request is made.
-  - If the user moves to a new location, the nearest branches update automatically.
+
+### 3. Mobile View Optimization
+
+**Challenge:**
+Branch cards and "Get Directions" links were not displaying properly on mobile devices, with text overflow, poor spacing, and difficult-to-tap elements. The directions button was particularly problematic - it was either invisible or too subtle to notice.
+
+**Solution:**
+Implemented comprehensive mobile-specific CSS using `@media (max-width: 600px)` with extensive `!important` overrides to ensure mobile styles take precedence:
+
+- **Cards:** Full-width layout with proper padding (16px 14px), adjusted font sizes, and flex layout to ensure all elements are visible
+- **Title & Address:** Added word-break and overflow-wrap to prevent text overflow, with proper line-height for readability
+- **Chips:** Made them wrap properly with smaller font size (11px), reduced gap (6px), and max-width to prevent overflow
+- **Footer:** Changed to column layout (`flex-direction: column`) with increased padding and visible border for better separation
+- **Get Directions Button:** Complete redesign for mobile:
+  - **Visibility:** Solid gold background (var(--gold-accent)) instead of transparent
+  - **Contrast:** Dark text (var(--midnight)) on gold background for maximum readability
+  - **Tap Target:** 44px minimum height (Apple's accessibility guideline)
+  - **Size:** Increased font size (15px) and padding (12px 16px) for easy tapping
+  - **Feedback:** Active state with scale transform for visual confirmation
+  - **Accessibility:** Removed tap highlight color and ensured proper cursor
+
+**Key Technical Details:**
+- Placed mobile media query at the END of CSS file to ensure it overrides desktop styles
+- Used `!important` flags extensively to override any conflicting styles
+- Added `box-sizing: border-box` to prevent width overflow
+- Set `width: 100% !important` and `max-width: 100vw !important` on cards
+- Made directions link clearly visible with solid background color
+
+**Code Example:**
+```css
+@media (max-width: 600px) {
+  .bs-directions-link {
+    display: block !important;
+    width: 100% !important;
+    min-height: 44px !important;
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    padding: 12px 16px !important;
+    background: var(--gold-accent) !important;
+    color: var(--midnight) !important;
+    border-radius: 8px !important;
+  }
+}
+```
+
+**Result:**
+- Cards are now fully visible and properly spaced on all mobile devices
+- "Get Directions" button is prominent, visible, and easy to tap
+- All text wraps properly without overflow
+- Touch feedback provides clear confirmation of interactions
+
+### 4. Modal Scroll Lock and Mobile Optimization
+
+**Challenge:**
+When the branch detail modal was open, users could still scroll the background page, creating a poor user experience especially on mobile devices. Additionally, the "Get Directions" button and other modal elements were not properly visible or accessible on mobile.
+
+**Solution:**
+Implemented comprehensive modal improvements:
+
+**Background Scroll Lock:**
+- **CSS:** Added `body.modal-open` class with `overflow: hidden` and `touch-action: none`
+- **React:** Added `useEffect` hook in BranchDetailModal to add/remove the class when modal opens/closes
+
+**Mobile Modal Optimization:**
+- **Modal Scrolling:** Added `maxHeight: "90vh"` and `overflowY: "auto"` to modal container to ensure all content is accessible via scrolling
+- **Header Layout:** Changed modal header (`.bs-split`) to stack vertically on mobile for better readability
+- **Close Button:** Made full-width (100%) with 44px minimum height for easy tapping
+- **Get Directions Button Container:** Added highly visible wrapper with:
+  - Light gold background (`rgba(202,176,76,.1)`)
+  - 2px solid gold border for maximum visibility
+  - 16px padding for visual separation
+  - Border radius for modern appearance
+- **Get Directions Button:** 
+  - Full-width display on mobile (100%)
+  - Increased minimum height to 48px for optimal tap target
+  - Larger font size (16px) and padding (14px 20px)
+  - Prominent gold background with dark text for maximum visibility
+  - Touch feedback with scale transform
+- **Detail Items:** Optimized spacing and font sizes for mobile readability
+- **Modal Body:** Ensured proper width and padding constraints with smooth scrolling (`-webkit-overflow-scrolling: touch`)
+- **Bottom Spacing:** Added extra spacing at the end of modal content to ensure "Get Directions" button is always fully visible when scrolled
+
+**Code Example:**
+```tsx
+// Scroll lock
+useEffect(() => {
+  if (open) {
+    document.body.classList.add("modal-open");
+  } else {
+    document.body.classList.remove("modal-open");
+  }
+  return () => document.body.classList.remove("modal-open");
+}, [open]);
+```
+
+```css
+/* Mobile modal styles */
+@media (max-width: 600px) {
+  /* Ensure modal is scrollable */
+  .bs-modal-directions-wrapper {
+    margin-top: 20px !important;
+    padding: 16px !important;
+    background: rgba(202,176,76,.1) !important;
+    border: 2px solid var(--gold-accent) !important;
+    border-radius: 12px !important;
+  }
+  
+  .bs-btn.bs-btn--primary {
+    display: flex !important;
+    width: 100% !important;
+    min-height: 48px !important;
+    font-size: 16px !important;
+    padding: 14px 20px !important;
+    background: var(--gold-accent) !important;
+  }
+  
+  .bs-split {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+}
+```
+
+```tsx
+// Modal container with scrolling
+<div style={{
+  maxHeight: "90vh",
+  overflowY: "auto",
+  ...otherStyles
+}}>
+  {/* Modal content */}
+  <div className="bs-modal-directions-wrapper">
+    <a className="bs-btn bs-btn--primary" href={dir}>
+      🧭 Get Directions
+    </a>
+  </div>
+</div>
+```
+
+**Result:**
+- Background page is locked when modal is open on all devices
+- Modal is fully scrollable on mobile devices with smooth touch scrolling
+- Modal content never exceeds 90% of viewport height, ensuring proper display on all screen sizes
+- "Get Directions" button is highly visible with gold-bordered wrapper that stands out from other content
+- Button is always accessible by scrolling to the bottom of the modal
+- "Get Directions" button is prominent and easy to tap in both card view and modal view
+- Close button is accessible with proper tap target size
+- All modal elements are properly spaced and sized for mobile interaction
+- Extra bottom spacing ensures the button is never cut off by the viewport
 
 ---
 
-**Tools Used:**
 - Postman for manual GraphQL queries.
 - Next.js, React, TypeScript for UI and logic.
 - GraphQL introspection for schema discovery.

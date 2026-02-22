@@ -340,7 +340,7 @@ export default function BranchFinder() {
 																					{b.zipCode && <span className="bs-chip">🏷️ {b.zipCode}</span>}
 																					{/* legacy/extra fields */}
 																					{b.region && <span className="bs-chip">{b.region}</span>}
-																					{b.postal && <span className="bs-chip">🏷️ {b.postal}</span>}
+
 																					{b.branchType && <span className="bs-chip">🏢 {b.branchType}</span>}
 																					{b.isActive != null && <span className={`bs-chip ${b.isActive ? "bs-chip--active" : "bs-chip--inactive"}`}>{b.isActive ? "✅ Active" : "⛔ Inactive"}</span>}
 																					{b.openingHours && <span className="bs-chip">🕐 {b.openingHours}</span>}

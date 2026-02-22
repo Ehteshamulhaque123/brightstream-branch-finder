@@ -1,5 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;600;700;800;900&display=swap');
 
+/* Prevent background scroll when modal is open */
+body.modal-open {
+  overflow: hidden !important;
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  touch-action: none !important;
+  -webkit-overflow-scrolling: none !important;
+}
+
 :root {
   /* ===== COLOR VARIABLES ===== */
   --midnight: #111827;
@@ -44,11 +55,16 @@
 
   /* ===== BUTTONS (gold + outline like screenshot) ===== */
   .bs-btn{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     border-radius: 999px;
     padding: 12px 26px;
     font-weight: 800;
     border: 1px solid transparent;
     cursor:pointer;
+    text-decoration: none;
     transition: transform .06s ease, background .15s ease, opacity .15s ease;
   }
   .bs-btn:active{ transform: translateY(1px); }
@@ -407,5 +423,217 @@ a {
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
+  }
+}
+
+/* ===== MOBILE RESPONSIVE STYLES ===== */
+@media (max-width: 600px) {
+  .bs-card {
+    width: 100% !important;
+    max-width: 100vw !important;
+    padding: 16px 14px 14px !important;
+    font-size: 15px;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  .bs-card__title {
+    font-size: 16px !important;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    margin-bottom: 8px;
+  }
+  
+  .bs-card__address {
+    font-size: 13px !important;
+    margin: 6px 0 10px !important;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    line-height: 1.5;
+  }
+  
+  .bs-card__chips {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    margin-bottom: 12px !important;
+    max-width: 100%;
+  }
+  
+  .bs-chip {
+    font-size: 11px !important;
+    padding: 5px 10px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(50% - 3px);
+    flex-shrink: 0;
+  }
+  
+  .bs-card__footer {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: stretch !important;
+    gap: 0 !important;
+    padding-top: 12px !important;
+    margin-top: 4px !important;
+    border-top: 1px solid rgba(0,0,0,.08) !important;
+    width: 100% !important;
+  }
+  
+  .bs-directions-link {
+    display: block !important;
+    width: 100% !important;
+    min-height: 44px !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    padding: 12px 16px !important;
+    background: var(--gold-accent) !important;
+    border-radius: 8px !important;
+    color: var(--midnight) !important;
+    text-decoration: none !important;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    line-height: 1.4 !important;
+    cursor: pointer !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+  
+  .bs-directions-link:hover {
+    background: var(--gold-hover) !important;
+    text-decoration: none !important;
+  }
+  
+  .bs-directions-link:active {
+    background: var(--gold-active) !important;
+    transform: scale(0.98) !important;
+  }
+  
+  /* Ensure hero and other elements don't interfere */
+  .bs-hero {
+    padding: 60px 16px 50px !important;
+  }
+  
+  /* Search and filter controls */
+  .bs-search-group {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+  
+  /* Pagination */
+  .bs-pill {
+    font-size: 14px !important;
+    padding: 10px 18px !important;
+    min-height: 44px !important;
+  }
+  
+  /* Modal adjustments for mobile */
+  .bs-modal__body {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+  
+  /* Make "Get Directions" button in modal visible and prominent */
+  .bs-btn.bs-btn--primary {
+    display: flex !important;
+    width: 100% !important;
+    min-height: 48px !important;
+    box-sizing: border-box !important;
+    justify-content: center !important;
+    align-items: center !important;
+    font-size: 16px !important;
+    font-weight: 800 !important;
+    padding: 14px 20px !important;
+    background: var(--gold-accent) !important;
+    color: var(--midnight) !important;
+    border-radius: 10px !important;
+    text-decoration: none !important;
+    gap: 8px !important;
+    margin-top: 16px !important;
+    cursor: pointer !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+  
+  .bs-btn.bs-btn--primary:hover,
+  .bs-btn.bs-btn--primary:focus {
+    background: var(--gold-hover) !important;
+  }
+  
+  .bs-btn.bs-btn--primary:active {
+    background: var(--gold-active) !important;
+    transform: scale(0.98) !important;
+  }
+  
+  /* Modal detail items */
+  .bs-detail-item {
+    padding: 12px !important;
+    font-size: 14px !important;
+  }
+  
+  .bs-detail-item__label {
+    font-size: 11px !important;
+  }
+  
+  .bs-detail-item__value {
+    font-size: 14px !important;
+  }
+  
+  /* Modal header - stack vertically on mobile */
+  .bs-split {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+  
+  /* Close button in modal - make it full width on mobile */
+  .bs-split .bs-btn {
+    width: 100% !important;
+    min-height: 44px !important;
+  }
+  
+  /* Ensure modal content is scrollable and button is accessible */
+  .bs-modal__section {
+    margin-bottom: 16px !important;
+  }
+  
+  /* Make the Get Directions button wrapper highly visible */
+  .bs-modal-directions-wrapper {
+    margin-top: 20px !important;
+    padding: 16px !important;
+    background: rgba(202,176,76,.1) !important;
+    border-radius: 12px !important;
+    border: 2px solid var(--gold-accent) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Ensure the Get Directions link/button inside is styled */
+  .bs-modal-directions-wrapper .bs-btn {
+    display: flex !important;
+    width: 100% !important;
+    min-height: 48px !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Modal container scrolling */
+  .bs-modal__body {
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  /* Add spacing at bottom of modal to ensure button is always reachable */
+  .bs-modal__body::after {
+    content: '' !important;
+    display: block !important;
+    height: 20px !important;
   }
 }

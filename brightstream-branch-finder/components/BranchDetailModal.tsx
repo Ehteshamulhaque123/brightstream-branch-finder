@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import type { NormalizedBranch } from "../lib/normalize";
 import { directionsUrl } from "../lib/directions";
 
@@ -12,6 +13,32 @@ export default function BranchDetailModal({
 	onClose: () => void;
 	branch: NormalizedBranch | null;
 }) {
+	// Prevent background scroll when modal is open and preserve scroll position
+	useEffect(() => {
+		if (open) {
+			// Save current scroll position
+			const scrollY = window.scrollY;
+			document.body.style.top = `-${scrollY}px`;
+			document.body.classList.add("modal-open");
+		} else {
+			// Restore scroll position
+			const scrollY = document.body.style.top;
+			document.body.classList.remove("modal-open");
+			document.body.style.top = '';
+			if (scrollY) {
+				window.scrollTo(0, parseInt(scrollY || '0') * -1);
+			}
+		}
+		return () => {
+			const scrollY = document.body.style.top;
+			document.body.classList.remove("modal-open");
+			document.body.style.top = '';
+			if (scrollY) {
+				window.scrollTo(0, parseInt(scrollY || '0') * -1);
+			}
+		};
+	}, [open]);
+
 	if (!open || !branch) return null;
 
 	const dir = directionsUrl({
@@ -20,9 +47,16 @@ export default function BranchDetailModal({
 		location: branch.location ?? null,
 	});
 
+	// Prevent scroll events on backdrop
+	const preventScroll = (e: React.TouchEvent | React.WheelEvent) => {
+		e.preventDefault();
+	};
+
 	return (
 		<div
 			onClick={onClose}
+			onTouchMove={preventScroll}
+			onWheel={preventScroll}
 			style={{
 				position: "fixed",
 				inset: 0,
@@ -31,12 +65,16 @@ export default function BranchDetailModal({
 				display: "grid",
 				placeItems: "center",
 				padding: 16,
+				overscrollBehavior: "contain",
 			}}
 		>
 			<div
 				onClick={(e) => e.stopPropagation()}
 				style={{
 					width: "min(720px, 100%)",
+					maxHeight: "90vh",
+					overflowY: "auto",
+					overscrollBehavior: "contain",
 					background: "#fff",
 					borderRadius: 20,
 					border: "1px solid rgba(0,0,0,.10)",
@@ -145,15 +183,6 @@ export default function BranchDetailModal({
 								</div>
 							</div>
 						)}
-						{branch.postal && (
-							<div className="bs-detail-item">
-								<span className="bs-detail-item__icon">🏷️</span>
-								<div>
-									<div className="bs-detail-item__label">Postal / Zip</div>
-									<div className="bs-detail-item__value">{branch.postal}</div>
-								</div>
-							</div>
-						)}
 						{branch.branchType && (
 							<div className="bs-detail-item">
 								<span className="bs-detail-item__icon">🏢</span>
@@ -218,8 +247,8 @@ export default function BranchDetailModal({
 					) : null}
 
 					{/* Directions CTA */}
-					<div style={{ marginTop: 16 }}>
-						<a className="bs-btn bs-btn--primary" href={dir} target="_blank" rel="noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
+					<div className="bs-modal-directions-wrapper" style={{ marginTop: 16, width: '100%' }}>
+						<a className="bs-btn bs-btn--primary" href={dir} target="_blank" rel="noreferrer">
 							🧭 Get Directions
 						</a>
 					</div>
