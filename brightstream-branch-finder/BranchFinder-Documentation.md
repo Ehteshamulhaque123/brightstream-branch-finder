@@ -312,6 +312,8 @@ useEffect(() => {
   } else {
     document.body.classList.remove("modal-open");
   }
+  // Cleanup: Always remove class when component unmounts
+  // Prevents scroll lock persisting if modal unmounts unexpectedly
   return () => document.body.classList.remove("modal-open");
 }, [open]);
 ```
@@ -2446,46 +2448,30 @@ brightstream-branch-finder/
 4. **A/B Testing:** Test UI variations for conversion optimization
 
 **Edge Case Handling:**
-
-**1. No Coordinates Available**
-- **Current:** Show "No coordinates available" message
-- **Future:** Fall back to geocoding API to get coordinates from address
-- **Benefit:** More branches shown on map
-
-**2. Malformed Coordinates**
-- **Current:** safeNumber function returns null
-- **Future:** Log errors to monitoring service, attempt to fix common issues
-- **Benefit:** Better debugging and data quality insights
-
-**3. API Timeout/Errors**
-- **Current:** Show error message, allow retry
-- **Future:** Implement exponential backoff, cache last successful response
-- **Benefit:** More resilient to transient network issues
-
-**4. Empty Search Results**
-- **Current:** Show "0 results" message
-- **Future:** Suggest nearby alternatives, "Did you mean...?" suggestions
-- **Benefit:** Better user experience when search fails
-
-**5. Geolocation Denied**
-- **Current:** Show alert message
-- **Future:** Provide manual location input, IP-based fallback
-- **Benefit:** "Near me" feature works even without location permission
-
-**6. Large Dataset Performance**
-- **Current:** Client-side filtering (fast for ~20 branches)
-- **Future:** Server-side pagination and filtering for 1000+ branches
-- **Benefit:** App remains fast with massive datasets
-
-**7. Special Characters in Search**
-- **Current:** Basic string matching
-- **Future:** Normalize unicode, escape regex, handle diacritics
-- **Benefit:** Search works for international characters
-
-**8. Multiple Branches at Same Address**
-- **Current:** Separate markers (may overlap)
-- **Future:** Cluster markers, show list on click
-- **Benefit:** Cleaner map with many branches in one area
+- **No Coordinates Available**
+  - **Current:** Show "No coordinates available" message
+  - **Future:** Fall back to geocoding API to get coordinates from address
+  - **Benefit:** More branches shown on map
+- **Malformed Coordinates**
+  - **Current:** safeNumber function returns null
+  - **Future:** Log errors to monitoring service, attempt to fix common issues
+  - **Benefit:** Better debugging and data quality insights
+- **API Timeout/Errors**
+  - **Current:** Show error message, allow retry
+  - **Future:** Implement exponential backoff, cache last successful response
+  - **Benefit:** More resilient to transient network issues
+- **Empty Search Results**
+  - **Current:** Show "0 results" message
+  - **Future:** Suggest nearby alternatives, "Did you mean...?" suggestions
+  - **Benefit:** Better user experience when search fails
+- **Geolocation Denied**
+  - **Current:** Show alert message
+  - **Future:** Provide manual location input, IP-based fallback
+  - **Benefit:** "Near me" feature works even without location permission
+- **Multiple Branches at Same Address**
+  - **Current:** Separate markers (may overlap)
+  - **Future:** Cluster markers, show list on click
+  - **Benefit:** Cleaner map with many branches in one area
 
 ---
 
